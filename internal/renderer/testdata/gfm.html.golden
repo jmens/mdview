@@ -1,0 +1,25 @@
+<h1 id="gfm-features">GFM Features</h1>
+<table>
+<thead>
+<tr>
+<th>Col A</th>
+<th>Col B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>foo</td>
+<td>bar</td>
+</tr>
+<tr>
+<td>baz</td>
+<td>qux</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><input checked="" disabled="" type="checkbox"> done</li>
+<li><input disabled="" type="checkbox"> open</li>
+</ul>
+<p><del>strike</del></p>
+<p>Autolink: <a href="https://example.com">https://example.com</a></p>

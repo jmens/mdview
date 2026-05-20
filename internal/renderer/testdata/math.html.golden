@@ -1,0 +1,6 @@
+<h1 id="math">Math</h1>
+<p>Inline math: $E = mc^2$.</p>
+<p>Block:</p>
+<p>$$
+\int_0^1 x^2 , dx = \frac{1}{3}
+$$</p>

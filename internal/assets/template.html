@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="auto">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{{.Title}}</title>
+  <link rel="stylesheet" href="/assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="/assets/theme.css">
+</head>
+<body>
+  <main id="content">{{.Body}}</main>
+
+  <div id="search-bar" hidden>
+    <input id="search-input" type="text" placeholder="Search…" autocomplete="off">
+    <span id="search-count"></span>
+    <button id="search-prev" title="Previous (Shift+Enter)">&uarr;</button>
+    <button id="search-next" title="Next (Enter)">&darr;</button>
+    <button id="search-close" title="Close (Esc)">&times;</button>
+  </div>
+
+  <div id="toast" hidden></div>
+
+  <script src="/assets/vendor/katex/katex.min.js"></script>
+  <script src="/assets/vendor/katex/auto-render.min.js"></script>
+  <script src="/assets/vendor/mermaid/mermaid.min.js"></script>
+  <script src="/assets/app.js"></script>
+</body>
+</html>
