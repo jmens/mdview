@@ -1,1 +1,19 @@
+# Build output
 /bin/
+
+# Go
+*.test
+*.out
+coverage.*
+/vendor/
+
+# Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
