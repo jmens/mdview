@@ -110,6 +110,12 @@ func run(args []string) error {
 		defer func() { _ = stopWatch() }()
 	}
 
+	// WebKit/JSC emit harmless signal-handler and option-parser warnings
+	// on startup and shutdown. Filter them out before initializing webview.
+	if restoreStderr, ferr := startStderrFilter(); ferr == nil {
+		defer restoreStderr()
+	}
+
 	w := webview.New(false)
 	defer w.Destroy()
 	w.SetTitle("mdview — " + filepath.Base(docPath))
