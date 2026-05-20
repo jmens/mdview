@@ -8,7 +8,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"runtime/debug"
 
@@ -131,16 +130,6 @@ func run(args []string) error {
 	w.Navigate(url)
 	w.Run()
 	return nil
-}
-
-func openExternal(url string) {
-	cmd := exec.Command("xdg-open", url)
-	if err := cmd.Start(); err != nil {
-		fmt.Fprintln(os.Stderr, "mdview: xdg-open failed:", err)
-		return
-	}
-	// Release child immediately; we don't care about its exit.
-	go func() { _ = cmd.Wait() }()
 }
 
 func version() string {
