@@ -1,4 +1,4 @@
-// mdview is a small, fast Markdown viewer for Ubuntu/Linux.
+// mdview is a small, fast Markdown viewer for Linux, macOS, and Windows.
 //
 // Usage: mdview <path/to/file.md>
 package main
