@@ -43,9 +43,7 @@ func startStderrFilter() (func(), error) {
 		return nil, err
 	}
 
-	done := make(chan struct{})
 	go func() {
-		defer close(done)
 		sc := bufio.NewScanner(r)
 		sc.Buffer(make([]byte, 16*1024), 1024*1024)
 		for sc.Scan() {
@@ -59,10 +57,15 @@ func startStderrFilter() (func(), error) {
 	}()
 
 	cleanup := func() {
+		// Restore real stderr, then close the pipe ends. We deliberately
+		// do NOT wait for the reader goroutine: WebKit's child processes
+		// (UIProcess/WebProcess/NetworkProcess) inherit fd 2 and may keep
+		// the write side alive briefly after w.Destroy() returns, so the
+		// reader can't see EOF. Closing the read end unblocks the
+		// goroutine; the OS reclaims it on exit.
 		_ = syscall.Dup2(origFd, 2)
-		_ = w.Close()
-		<-done
 		_ = r.Close()
+		_ = w.Close()
 		_ = origStderr.Close()
 	}
 	return cleanup, nil
