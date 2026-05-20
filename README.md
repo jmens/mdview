@@ -1,6 +1,6 @@
 # mdview
 
-A small, fast Markdown viewer for Ubuntu/Linux. Open a file with
+A small, fast Markdown viewer for Linux, macOS, and Windows. Open a file with
 `mdview path/to/file.md` and a native window pops up rendering it.
 
 ## Features
@@ -33,6 +33,35 @@ make build               # produces ./bin/mdview
 sudo make install        # installs to /usr/local/bin/mdview
 ```
 
+### Build (Windows)
+
+Runtime: Edge WebView2 is required. It ships with Windows 11 and is delivered
+by Windows Update on Windows 10; if missing, install Microsoft's "Evergreen
+Bootstrapper" from the official download page.
+
+Build dependencies: `mingw-w64` with `gcc.exe` on `PATH`. Easiest path is
+[MSYS2](https://www.msys2.org/):
+
+```powershell
+winget install MSYS2.MSYS2
+# in the MSYS2 shell:
+pacman -S mingw-w64-x86_64-gcc
+# add C:\msys64\mingw64\bin to PATH
+```
+
+Then build the executable:
+
+```powershell
+$env:CGO_ENABLED = "1"
+go build -o mdview.exe .\cmd\mdview
+```
+
+Run with:
+
+```powershell
+.\mdview.exe README.md
+```
+
 ## Usage
 
 ```sh
@@ -53,8 +82,10 @@ mdview README.md
 | `k`, `↑`        | Scroll up                    |
 | `g`, `G`        | Top / bottom                 |
 
-External links open in your default browser via `xdg-open`. Relative image
-paths are resolved against the directory of the Markdown file.
+External links open in your default browser via the OS handler
+(`xdg-open` on Linux, `open` on macOS, `rundll32 url.dll,FileProtocolHandler`
+on Windows). Relative image paths are resolved against the directory of the
+Markdown file.
 
 ## Development
 
