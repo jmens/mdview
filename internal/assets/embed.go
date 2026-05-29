@@ -8,7 +8,7 @@ import (
 	"io/fs"
 )
 
-//go:embed template.html theme.css app.js vendor
+//go:embed template.html pdf.html theme.css app.js pdf.js vendor
 var files embed.FS
 
 // FS returns the embedded filesystem (template.html, theme.css, app.js, vendor/...).
@@ -27,4 +27,13 @@ func Template() (*template.Template, error) {
 		return nil, err
 	}
 	return template.New("shell").Parse(string(b))
+}
+
+// PDFTemplate parses the HTML shell template used for PDF documents.
+func PDFTemplate() (*template.Template, error) {
+	b, err := files.ReadFile("pdf.html")
+	if err != nil {
+		return nil, err
+	}
+	return template.New("pdf-shell").Parse(string(b))
 }

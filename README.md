@@ -1,17 +1,18 @@
 # mdview
 
-A small, fast Markdown viewer for Ubuntu/Linux. Open a file with
-`mdview path/to/file.md` and a native window pops up rendering it.
+A small, fast Markdown and PDF viewer for Ubuntu/Linux. Open a file with
+`mdview path/to/file.md` (or `.pdf`) and a native window pops up rendering it.
 
 ## Features
 
-- CommonMark + GitHub Flavored Markdown (tables, task lists, strikethrough,
-  autolinks)
-- Syntax-highlighted code blocks (Chroma, ~200 languages)
-- Math via KaTeX (`$inline$`, `$$block$$`)
-- Mermaid diagrams (` ```mermaid ` blocks)
+- **Markdown:** CommonMark + GitHub Flavored Markdown (tables, task lists,
+  strikethrough, autolinks)
+- **Markdown:** Syntax-highlighted code blocks (Chroma, ~200 languages)
+- **Markdown:** Math via KaTeX (`$inline$`, `$$block$$`)
+- **Markdown:** Mermaid diagrams (` ```mermaid ` blocks)
+- **Markdown:** In-page search (`Ctrl+F` or `/`)
+- **PDF:** Page-by-page rendering via PDF.js (vendored, fully offline)
 - Light / dark theme (follows OS by default, toggle with `t`)
-- In-page search (`Ctrl+F` or `/`)
 - Live reload on file changes
 - Single binary, embedded assets, fully offline
 
@@ -61,4 +62,12 @@ paths are resolved against the directory of the Markdown file.
 ```sh
 make test                # runs the renderer golden tests
 go test ./internal/renderer -update   # regenerate goldens
+```
+
+To refresh the vendored PDF.js (override `PDFJS_VERSION` to pin a different
+release):
+
+```sh
+make vendor-pdfjs
+PDFJS_VERSION=4.10.38 make vendor-pdfjs
 ```

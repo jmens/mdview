@@ -300,3 +300,47 @@ mark.mdview-hit.active { background: #ff8c00; color: #ffffff; }
 
 .task-list-item { list-style: none; }
 .task-list-item-checkbox { margin-right: 0.4em; }
+
+/* ---- PDF mode ----------------------------------------------------------- */
+
+body.pdf-mode {
+  display: flex;
+  justify-content: center;
+  padding: 1.5rem 0;
+}
+
+body.pdf-mode #pdf-root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  max-width: none;
+}
+
+body.pdf-mode #pdf-status {
+  padding: 1rem;
+  color: var(--text-muted, #888);
+  font-family: system-ui, sans-serif;
+}
+
+body.pdf-mode #pdf-pages {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+body.pdf-mode canvas.pdf-page {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+  background: #fff; /* PDF pages are paper, regardless of UI theme */
+}
+
+[data-theme="dark"] body.pdf-mode canvas.pdf-page {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+}
+
+@media (prefers-color-scheme: dark) {
+  [data-theme="auto"] body.pdf-mode canvas.pdf-page {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+  }
+}

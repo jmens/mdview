@@ -18,6 +18,7 @@ import (
 	"time"
 
 	"github.com/sipgate/mdview/internal/assets"
+	"github.com/sipgate/mdview/internal/doctype"
 	"github.com/sipgate/mdview/internal/renderer"
 )
 
@@ -25,6 +26,7 @@ import (
 type Server struct {
 	docPath  string
 	docDir   string
+	docType  doctype.Type
 	renderer *renderer.Renderer
 
 	mu        sync.RWMutex
@@ -38,11 +40,13 @@ type Server struct {
 	listener   net.Listener
 }
 
-// New constructs a Server for the given Markdown file.
-func New(docPath string, r *renderer.Renderer) *Server {
+// New constructs a Server for the given document file.
+// docType selects which HTML shell to serve at `/`.
+func New(docPath string, docType doctype.Type, r *renderer.Renderer) *Server {
 	return &Server{
 		docPath:     docPath,
 		docDir:      filepath.Dir(docPath),
+		docType:     docType,
 		renderer:    r,
 		subscribers: make(map[chan struct{}]struct{}),
 	}
@@ -52,9 +56,11 @@ func New(docPath string, r *renderer.Renderer) *Server {
 // and starts serving in a goroutine. The returned URL is the address the
 // webview should navigate to.
 func (s *Server) Start() (string, error) {
-	if err := s.RenderNow(); err != nil {
-		// We still want to come up so the user sees the error in the UI.
-		s.setError(err.Error())
+	if s.docType == doctype.Markdown {
+		if err := s.RenderNow(); err != nil {
+			// We still want to come up so the user sees the error in the UI.
+			s.setError(err.Error())
+		}
 	}
 
 	ln, err := net.Listen("tcp", "127.0.0.1:0")
@@ -110,8 +116,10 @@ func (s *Server) RenderNow() error {
 
 // NotifyChange re-renders and broadcasts a reload event to all subscribers.
 func (s *Server) NotifyChange() {
-	if err := s.RenderNow(); err != nil {
-		// Error is already cached; clients render it inline.
+	if s.docType == doctype.Markdown {
+		if err := s.RenderNow(); err != nil {
+			// Error is already cached; clients render it inline.
+		}
 	}
 	s.broadcast()
 }
@@ -135,6 +143,15 @@ func (s *Server) handleRoot(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
+	switch s.docType {
+	case doctype.PDF:
+		s.renderPDFShell(w)
+	default:
+		s.renderMarkdownShell(w)
+	}
+}
+
+func (s *Server) renderMarkdownShell(w http.ResponseWriter) {
 	tmpl, err := assets.Template()
 	if err != nil {
 		http.Error(w, "template: "+err.Error(), http.StatusInternalServerError)
@@ -152,6 +169,22 @@ func (s *Server) handleRoot(w http.ResponseWriter, r *http.Request) {
 	}{
 		Title: titleOrDefault(res.Title, filepath.Base(s.docPath)),
 		Body:  template.HTML(body), //nolint:gosec // body comes from goldmark renderer; we control input
+	})
+}
+
+func (s *Server) renderPDFShell(w http.ResponseWriter) {
+	tmpl, err := assets.PDFTemplate()
+	if err != nil {
+		http.Error(w, "template: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	_ = tmpl.Execute(w, struct {
+		Title   string
+		FileURL string
+	}{
+		Title:   filepath.Base(s.docPath),
+		FileURL: "/files/" + filepath.Base(s.docPath),
 	})
 }
 

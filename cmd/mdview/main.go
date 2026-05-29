@@ -14,15 +14,16 @@ import (
 
 	webview "github.com/webview/webview_go"
 
+	"github.com/sipgate/mdview/internal/doctype"
 	"github.com/sipgate/mdview/internal/renderer"
 	"github.com/sipgate/mdview/internal/server"
 	"github.com/sipgate/mdview/internal/watcher"
 )
 
-const usage = `mdview — small, fast Markdown viewer
+const usage = `mdview — small, fast Markdown and PDF viewer
 
 Usage:
-  mdview <path/to/file.md>
+  mdview <path/to/file.md|.pdf>
 
 Options:
   -h, --help      Show this help
@@ -32,8 +33,8 @@ Shortcuts (in the viewer window):
   q, Esc          Quit
   t               Toggle light/dark theme
   r               Reload
-  Ctrl+F, /       Find in page
-  n, N            Next / previous match
+  Ctrl+F, /       Find in page (Markdown only)
+  n, N            Next / previous match (Markdown only)
   j, k, ↑, ↓      Scroll
   g, G            Top / bottom
 `
@@ -93,8 +94,9 @@ func run(args []string) error {
 		return exitCodeError{code: 1, msg: docPath + " is a directory"}
 	}
 
+	docType := doctype.Detect(docPath)
 	r := renderer.New()
-	srv := server.New(docPath, r)
+	srv := server.New(docPath, docType, r)
 	url, err := srv.Start()
 	if err != nil {
 		return fmt.Errorf("start server: %w", err)

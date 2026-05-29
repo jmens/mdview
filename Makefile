@@ -6,7 +6,7 @@ PKG_CONFIG := $(abspath scripts/pkg-config-shim.sh)
 export GOTOOLCHAIN ?= local
 export PKG_CONFIG
 
-.PHONY: build run install uninstall test clean tidy deps
+.PHONY: build run install uninstall test clean tidy deps vendor-pdfjs
 
 build:
 	go build -ldflags "$(LDFLAGS)" -o bin/$(BINARY) ./cmd/mdview
@@ -24,7 +24,7 @@ uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/bin/$(BINARY)
 
 test:
-	go test ./internal/renderer/...
+	go test ./internal/...
 
 tidy:
 	go mod tidy
@@ -37,3 +37,6 @@ deps:
 
 clean:
 	rm -rf bin
+
+vendor-pdfjs:
+	scripts/vendor-pdfjs.sh
